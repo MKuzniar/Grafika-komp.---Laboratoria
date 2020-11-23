@@ -40,6 +40,7 @@ double R = 10;
 
 int kolor_1, kolor_2;
 
+// Funkcja odpowiedzialna za rotacje
 void rotate() {
     for (int i = 0; i < 3; i++) {
      theta[i] = theta[i] - 0.11;
@@ -49,6 +50,7 @@ void rotate() {
     glutPostRedisplay();
 }
 
+// Funkcja odpowedzialna za wyrysowanie jaja w postaci trojkatow
 void drawEgg()  {
     float tab[100][100][3];
 
@@ -68,6 +70,7 @@ void drawEgg()  {
             u = static_cast<float>(i) / (node_number - 1);
             v = static_cast<float>(j) / (node_number - 1);
 
+            // Wyzaczenie wspolrzednych na podstawie rownan parametrycznych
             tab[i][j][0] = (-90 * pow(u, 5) + 225 * pow(u, 4) - 270 *
             pow(u, 3) + 180 * pow(u, 2) - 45 * u)*cos(M_PI * v);
 
@@ -79,6 +82,7 @@ void drawEgg()  {
 
             float ux, uz, uy, vz, vy, vx, length;
 
+            // Obliczenie wzorow pozwalajacych na obliczenie wektorow normalnych
             ux = (-450 * pow(u, 4) + 900 * pow(u, 3) - 810
             * pow(u, 2) + 360 * u - 45)*cos(3.14*v);
             uy = (640 * pow(u, 3) - 960 * pow(u, 2) + 320 * u);
@@ -95,10 +99,12 @@ void drawEgg()  {
             vectorNorm[i][j][1] = uz * vx - ux * vz;
             vectorNorm[i][j][2] = ux * vy - uy * vx;
 
+            // Obliczanie dlogosci wektora
             length = sqrt(vectorNorm[i][j][0] * vectorNorm[i][j][0]
             + vectorNorm[i][j][1] * vectorNorm[i][j][1]
             + vectorNorm[i][j][2] * vectorNorm[i][j][2]);
 
+            // Ustalenie warunkow oswietlenia jaja
             if (i == 0 || i == node_number) {
                 vectorNorm[i][j][0] = 0;
                 vectorNorm[i][j][1] = -1;
@@ -119,7 +125,7 @@ void drawEgg()  {
         }
     }
     int i = 0;
-
+// Wlaswiwe wyrysowanie jaja
 for (i = 0; i < node_number - 1; )  {
         for (int j = 0; j < node_number-1 ; j++) {
         glColor3f(255.0f, 255.0f, 255.0f);
@@ -149,6 +155,7 @@ for (i = 0; i < node_number - 1; )  {
     }
 }
 
+// Funkcja odpowedzialana za rotacje jaja wzg wybranej osi
 void rotateEgg(void) {
     glRotatef(theta[1], 0.0, 1.0, 0.0);
     drawEgg();
@@ -159,6 +166,8 @@ void RenderScene(void) {
     glLoadIdentity();
     gluLookAt(0, 0, 10.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
 
+    // Modyfikacja kata azymutu i elewacji o kat proporcjonalny do
+    // roznicy polozen kursora myszy w odpowiednich plaszczyznach
     if (status == 1) {
         azimuth_1 += delta_x * pix2angle;
         elevation_1 += delta_y * pix2angle;
@@ -180,6 +189,7 @@ void RenderScene(void) {
     if (elevation_2 < 0) elevation_2 = 0;
     if (azimuth_2 < 0) azimuth_2 = 0;
 
+    // Wyzanczenie polozenia zrodla swiatla
     light_one_position[0] = R * cos(azimuth_2) * cos(elevation_2);
     light_one_position[1] = R * sin(elevation_2);
     light_one_position[2] = R * sin(azimuth_2) * cos(elevation_2);
@@ -202,14 +212,26 @@ void RenderScene(void) {
 void MyInit(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+    // Definicja materialu z jakiego zrobione jest jajo
+
     GLfloat mat_ambient[] = { 1.0, 1.0, 1.0, 1.0 };
+    // Wspolczynniki ka =[kar,kag,kab] dla swiatla otoczenia
     GLfloat mat_diffuse[] = { 5.0, 5.0, 5.0, 1.0 };
+    // Wspolczynniki kd =[kdr,kdg,kdb] swiatla rozproszonego
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    // Wspolczynniki ks =[ksr,ksg,ksb] dla swiatla odbitego
     GLfloat mat_shininess = { 20.0 };
+    // Wspolczynnik n opisujacy polysk powierzchni
+
+    // Definicja zrodla swiatla
 
     GLfloat light_1_position[] = { 0.0, 0.0, 0.0, 1.0 };
+    // Polozenie zrodla
     GLfloat light_1_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
+    // Skladowe intensywnosci swiecenia zrodla swiatla otoczenia
     GLfloat light_1_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+    // Skladowe intensywnosci swiecenia
+    // zrodla swiatla powodujacego odbicie dyfuzyjne
 
     if (kolor_1 == 1) {
         light_1_diffuse[0] = 1.0;
@@ -226,9 +248,17 @@ void MyInit(void) {
 }
 
     GLfloat light_1_specular[] = {0.0, 1.0, 1.0, 0.0 };
+    // Skladowe intensywnosci swiecenia zrodla
+    // swiatla powodujacego odbicie kierunkowe
     GLfloat att_1_constant = { 1.0 };
+    // Skladowa stala ds dla modelu zmian oswietlenia
+    // w funkcji odleglosci od zrodla
     GLfloat att_1_linear = {  0.05 };
+    // Skladowa liniowa dl dla modelu zmian oswietlenia
+    // w funkcji odleglosci od zrodla
     GLfloat att_1_quadratic = {  0.001 };
+    // Skladowa kwadratowa dq dla modelu zmian oswietlenia
+    // w funkcji odleglosci od zrodla
 
     GLfloat light_2_position[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat light_2_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
@@ -253,11 +283,13 @@ void MyInit(void) {
     GLfloat att_2_linear = {  0.05 };
     GLfloat att_2_quadratic = {  0.001 };
 
+    // Ustawienie patrametrow materialu
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
     glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
 
+    // Ustawienie parametrow zrodla
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_1_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_1_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_1_specular);
@@ -276,6 +308,7 @@ void MyInit(void) {
     glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_2_quadratic);
     glLightfv(GL_LIGHT1, GL_POSITION, light_2_position);
 
+    // Ustawienie opcji systemu oswietlania sceny
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -283,11 +316,14 @@ void MyInit(void) {
     glEnable(GL_DEPTH_TEST);
 }
 
+// Funkcja bada stan myszy i ustawia wartosci odpowiednich zmiennych globalnych
 void Mouse(int btn, int state, int x, int y) {
+    // Wcisniety lewy przycisk myszy - modyfikacja polozenia zrodla swiatla 1
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         x_pos_old = x;
         y_pos_old = y;
         status = 1;
+    // Wcisniety prawy przycisk myszy - modyfikacja polozenia zrodla swiatla 2
     } else if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
         x_pos_old = x;
         y_pos_old = y;
@@ -297,6 +333,7 @@ void Mouse(int btn, int state, int x, int y) {
     }
 }
 
+// Funkcja monitoruje polozenie kursora myszy
 void Motion(GLsizei x, GLsizei y) {
     delta_x = x - x_pos_old;
     delta_y = y - y_pos_old;
@@ -307,6 +344,8 @@ void Motion(GLsizei x, GLsizei y) {
     glutPostRedisplay();
 }
 
+// Funkcja ma za zadanie utrzymanie stalych
+// proporcji rysowanych w przypadku zmiany rozmiarow okna
 void ChangeSize(GLsizei horizontal, GLsizei vertical) {
     pix2angle = 360.0 / static_cast<float>(horizontal);
     pix2angle *= 0.009;
@@ -327,6 +366,7 @@ void ChangeSize(GLsizei horizontal, GLsizei vertical) {
 }
 
 void main(void) {
+    // Ustalenie kolorow zrodel swiatla
     cout << " | 1 - Czerwony | 2 - Zielony | 3 - Niebieski | " << endl;
     cout << " Kolor pierwszego zrodla swiatla: ";
     cin >> kolor_1;
