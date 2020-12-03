@@ -1,15 +1,15 @@
 ﻿// Copyright [2020] <Miroslaw Kuzniar>"
-#include <windows.h>
-#include <iostream>
-#include <gl/gl.h>
-#include <glut.h>
-#include <stdio.h>
-#include <conio.h>
-#include <math.h>
+#include <windows.h> // NOLINT
+#include <iostream> // NOLINT
+#include <gl/gl.h> // NOLINT
+#include <glut.h> // NOLINT
+#include <stdio.h> // NOLINT
+#include <conio.h> // NOLINT
+#include <math.h> // NOLINT
 
 #define M_PI 3.14159265358979323846
 
-using namespace std;
+using namespace std; // NOLINT
 
 GLfloat light_position[] = { 30.0, 0.0, -10.0, 1.0 };
 
